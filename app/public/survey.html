@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<style>
+h2, .card, .card-title, .form-control {
+    padding: 20px;
+    text-align: left;
+}
+
+#spacingRow {
+    height: 50px;
+}
+
+</style>
+<body>
+    <div class="row" id="spacingRow"></div>
+    <div class="container">
+        <form>
+            <!--name input-->
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Your Name</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="2pac Shakur" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <!--url input-->
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" placeholder="https://www.example.com/yourselfie.jpg" id="basic-addon3">https://www.example.com/yourselfie.jpg</span>
+                    </div>
+                    <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+                </div>
+            </div>
+            <!--selection rules-->
+            <h4>1 = Strongly Disgree</h4><br>
+            <h4>5 = Strongly Agree</h4><br>
+            <!--questions output-->
+            <div class="row">
+                <div id="questionsOutput"></div>
+            </div>
+            <div class="row" id="spacingRow"></div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="row" id="spacingRow"></div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="../data/friends.js"></script>
+    
+</body>
+</html>
