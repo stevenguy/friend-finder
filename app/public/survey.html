@@ -9,9 +9,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <style>
+
 h2, .card, .card-title, .form-control {
-    padding: 20px;
+    padding: 10px;
     text-align: left;
+}
+
+.card {
+    margin-bottom: 20px;
 }
 
 #spacingRow {
@@ -29,7 +34,7 @@ h2, .card, .card-title, .form-control {
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">Your Name</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="2pac Shakur" aria-label="Username" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" id="friendName" placeholder="2pac Shakur" aria-label="Username" aria-describedby="basic-addon1">
                 </div>
             </div>
             <!--url input-->
@@ -49,13 +54,119 @@ h2, .card, .card-title, .form-control {
                 <div id="questionsOutput"></div>
             </div>
             <div class="row" id="spacingRow"></div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary" id="submit">Submit</button>
         </form>
     </div>
     <div class="row" id="spacingRow"></div>
+    <footer class="footer">
+        <div class="container">
+            <p>
+                <a href="/api/friends">API Table Link</a>
+            </p>
+        </div>
+    </footer>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-    <script type="text/javascript" src="../data/friends.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript">
+    
+var questions = [
+    "Your mind is always buzzing with unexplored ideas and plans.",
+    "Generally speaking, you rely more on your experience than your imagination.", 
+    "You find it easy to stay relaxed and focused even when there is some pressure.", 
+    "You rarely do something just out of sheer curiosity.", 
+    "People can rarely upset you.", 
+    "It is often difficult for you to relate to other people’s feelings.", 
+    "In a discussion, truth should be more important than people’s sensitivities.", 
+    "You rarely get carried away by fantasies and ideas.", 
+    "You think that everyone’s views should be respected regardless of whether they are supported by facts or not.", 
+    "You feel more energetic after spending time with a group of people."
+]
+var index = 1
+// Populate questions
+function survey () {
+    for (var i = 0; i < questions.length; i++) {
+        
+        var questionID = 'q' + index
+        var questionDiv = $('<div class="card">')
+        var surveyQuestion = $('<div class="card-title">')
+        var surveyAnswer = $("<select class='form-control' id=" + questionID + ">")
+        questionDiv.append($("<h2> Question " + index + "<br>"))
+        surveyQuestion.append($('<h2><br>').append(questions[i]))
+        surveyAnswer.append($('<option value="1">1</option>'))
+        surveyAnswer.append($('<option value="2">2</option>'))
+        surveyAnswer.append($('<option value="3">3</option>'))
+        surveyAnswer.append($('<option value="4">4</option>'))
+        surveyAnswer.append($('<option value="5">5</option>'))
+        questionDiv.append(surveyQuestion)
+        questionDiv.append(surveyAnswer)
+        index ++
+        $('#questionsOutput').append(questionDiv)
+        console.log(questionDiv)
+    }
+}
+survey()
+
+// Click button to push to api
+$('#submit').on('click', function(event) {
+    event.preventDefault();
+    var newFriend = {
+        name: $("#friendName").val().trim(),
+        url: $("#basic-url").val().trim(),
+        answer: [
+            parseInt($('#q1').val()),
+            parseInt($('#q2').val()),
+            parseInt($('#q3').val()),
+            parseInt($('#q4').val()),
+            parseInt($('#q5').val()),
+            parseInt($('#q6').val()),
+            parseInt($('#q7').val()),
+            parseInt($('#q8').val()),
+            parseInt($('#q9').val()),
+            parseInt($('#q10').val())
+        ]
+    };
+    console.log(newFriend)
+    $.post("/api/friends", newFriend,
+        function(data) {
+        $("#friendName").val("");
+        $("#basic-url").val("");
+    });
+})
+
+
+function runMatch() {
+    // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+    $.ajax({ url: "/api/friends", method: "GET" })
+      .then(function(friendsData) {
+
+        // Here we then log the friendsData to console, where it will show up as an object.
+        console.log(friendsData);
+        console.log("------------------------------------");
+
+        // Loop through and display each of the customers
+        for (var i = 0; i < friendsData.length; i++) {
+
+          // Get a reference to the tableList element and populate it with tables
+          var tableList = $("#tableList");
+
+          // Then display the fields in the HTML (Section Name, Date, URL)
+          var listItem = $("<li class='list-group-item mt-4'>");
+
+          listItem.append(
+            $("<h2>").text("Table #" + (i + 1)),
+            $("<hr>"),
+            $("<h2>").text("ID: " + friendsData[i].score),
+            $("<h2>").text("Name: " + friendsData[i].customerName),
+            $("<h2>").text("Email: " + friendsData[i].customerEmail),
+            $("<h2>").text("Phone: " + friendsData[i].phoneNumber)
+          );
+
+          tableList.append(listItem);
+        }
+    });
+}
+runMatch()
+    </script>
     
 </body>
 </html>
