@@ -7,6 +7,7 @@
     <title>Document</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    
 </head>
 <style>
 
@@ -54,28 +55,27 @@ h2, .card, .card-title, .form-control {
                 <div id="questionsOutput"></div>
             </div>
             <div class="row" id="spacingRow"></div>
-            <!-- Button trigger modal -->
-            <button type="submit" class="btn btn-primary" id="submit" data-toggle="modal" data-target="#exampleModal">Submit</button>
+            <!-- Trigger the modal with a button -->
+            <button type="button" class="btn btn-info btn-lg" id="submit">Submit</button>
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Meet Your New BFF</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="close" data-dismiss="modal"></button>
+                            <h4 class="modal-title">Meet your new BFF</h4>
                         </div>
                         <div class="modal-body">
-                            <h5 id="bffName"></h5>
-                            <img id="bffPic" src="" alt="No Image" width = 250px>
+                            <span id="bffName"></span><br>
+                            <img id="bffPic" src="" alt="Try Again">
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
-            </div>  
+            </div>
         </form>
     </div>
         
@@ -83,13 +83,17 @@ h2, .card, .card-title, .form-control {
     <footer class="footer">
         <div class="container">
             <p>
-                <a href="/api/friends">API Table Link</a>
+                <a href="/api/friends">API Table Link</a> | <a href="https://github.com/stevenguy/friend-finder">GitHub</a>
             </p>
         </div>
     </footer>
 
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+
+// Questions Array
 var questions = [
     "Your mind is always buzzing with unexplored ideas and plans.",
     "Generally speaking, you rely more on your experience than your imagination.", 
@@ -102,10 +106,13 @@ var questions = [
     "You think that everyone’s views should be respected regardless of whether they are supported by facts or not.", 
     "You feel more energetic after spending time with a group of people."
 ]
+// Index to dynamically assigned questions IDs
 var index = 1
+
+// Push friend's info into array to easily manage
 var loserScore = []
 
-// Populate questions: WORKS
+// Populate questions
 function survey () {
     for (var i = 0; i < questions.length; i++) {
         var questionID = 'q' + index
@@ -127,9 +134,10 @@ function survey () {
 }
 survey()
 
-// Click button to push to api
-$('#submit').on('click', function(event) {
-    event.preventDefault();
+// Click button to push to api and return friend match
+$('#submit').click(function(event) {
+    event.preventDefault()
+    // Create object to push to json db and global js array
     var newFriend = {
         name: $("#friendName").val().trim(),
         url: $("#basic-url").val().trim(),
@@ -145,22 +153,45 @@ $('#submit').on('click', function(event) {
             parseInt($('#q9').val()),
             parseInt($('#q10').val())
         ]
-    };
+    }
+    // Push friend data to global array to access for comparing friend match
     loserScore.push(newFriend)
-    console.log(loserScore)
+    // console.log(loserScore)
+    // push to json db 
     $.post("/api/friends", newFriend,
         function(data) {
-        $("#friendName").val("");
-        $("#basic-url").val("");
+        $("#friendName").val("")
+        $("#basic-url").val("")
     });
+    // pull json data to compare
     $.ajax({ url: "/api/friends", method: "GET" })
         .then(function(friendsData) {
-
-        // Here we then log the friendsData to console, where it will show up as an object.
-        console.log(friendsData);
-        console.log("------------------------------------");
-        $("#bffName").text(friendsData.name);
-        $("#bffPic").attr("src", friendsData.url);
+        // check data is outputting
+        // console.log(friendsData)
+        // console.log("------------------------------------")
+        // create variales to compare and index
+        let newBff
+        let compareDiff = 10
+        // compare answers against new friend
+        for (var i = 0; i < friendsData.length; i++) {
+            let scoresDiff = 0
+            for (let j = 0; j < 10; j ++) {
+                scoresDiff += Math.abs(parseInt(friendsData[i].answer[j]) - parseInt(loserScore[i].answer[j]))
+                // console.log(friendsData[i].answer[j])
+                // console.log(loserScore[i].answer[j])
+                // console.log(scoresDiff)
+                // index closiest match
+                if (scoresDiff < compareDiff){
+                    compareDiff = scoresDiff
+                    newBff = i
+                    // console.log(newBff)
+                // push to modal
+                    $("#myModal").modal('show')
+                    $("#bffName").text(friendsData[newBff].name)
+                    $("#bffPic").attr("src", friendsData[newBff].url) 
+                }
+            }
+        }
     });
 })
 </script>
