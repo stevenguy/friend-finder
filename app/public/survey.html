@@ -90,6 +90,7 @@ h2, .card, .card-title, .form-control {
     </footer>
 
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
@@ -176,7 +177,7 @@ $('#submit').click(function(event) {
         // compare answers against new friend
         for (var i = 0; i < friendsData.length; i++) {
             let scoresDiff = 0
-            for (let j = 0; j < answer.length; j ++) {
+            for (let j = 0; j < 50; j ++) {
                 scoresDiff += Math.abs(parseInt(friendsData[i].answer[j]) - parseInt(loserScore[i].answer[j]))
                 // console.log(friendsData[i].answer[j])
                 // console.log(loserScore[i].answer[j])
