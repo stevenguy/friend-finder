@@ -171,11 +171,11 @@ $('#submit').click(function(event) {
         // console.log("------------------------------------")
         // create variales to compare and index
         let newBff
-        let compareDiff = 50
+        let compareDiff = 10
         // compare answers against new friend
         for (var i = 0; i < friendsData.length; i++) {
             let scoresDiff = 0
-            for (let j = 0; j < 50; j ++) {
+            for (let j = 0; j < 10; j ++) {
                 scoresDiff += Math.abs(parseInt(friendsData[i].answer[j]) - parseInt(loserScore[i].answer[j]))
                 // console.log(friendsData[i].answer[j])
                 // console.log(loserScore[i].answer[j])
